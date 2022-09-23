@@ -1,0 +1,10 @@
+{
+    "name": "@p12/contracts-lib",
+    "version": "v0.0.1",
+    "license": "MIT",
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.7.3",
+        "@openzeppelin/contracts-upgradeable": "^4.7.3"
+    },
+    "files": ["contracts/"]
+}
