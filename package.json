@@ -1,6 +1,6 @@
 {
     "name": "@p12/contracts-lib",
-    "version": "v0.0.1",
+    "version": "v0.0.2",
     "license": "MIT",
     "dependencies": {
         "@openzeppelin/contracts": "^4.7.3",
