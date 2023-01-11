@@ -28,12 +28,15 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    function __Ownable_init() internal onlyInitializing {
-        __Ownable_init_unchained();
+    function __Ownable_init(address owner_) internal onlyInitializing {
+        __Ownable_init_unchained(owner_);
     }
 
-    function __Ownable_init_unchained() internal onlyInitializing {
-        _transferOwnership(_msgSender());
+    function __Ownable_init_unchained(address owner_)
+        internal
+        onlyInitializing
+    {
+        _transferOwnership(owner_);
     }
 
     /**
