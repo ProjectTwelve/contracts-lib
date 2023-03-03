@@ -8,6 +8,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Context.sol";
 
 contract SafeOwnable is Context {
+    error CallerNotOwner();
+    error ZeroAddressSet();
+    error CallerNotPendingOwner();
     address private _owner;
     address private _pendingOwner;
 
@@ -41,7 +44,9 @@ contract SafeOwnable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(owner() == _msgSender(), "SafeOwnable: caller not owner");
+        if (owner() != _msgSender()) {
+            revert CallerNotOwner();
+        }
         _;
     }
 
@@ -62,13 +67,13 @@ contract SafeOwnable is Context {
      * Note If direct is false, it will set an pending owner and the OwnerShipTransferring
      * only happens when the pending owner claim the ownership
      */
-    function transferOwnership(address newOwner, bool direct)
-        public
-        virtual
-        onlyOwner
-    {
-        require(newOwner != address(0), "SafeOwnable: new owner is 0");
-
+    function transferOwnership(
+        address newOwner,
+        bool direct
+    ) public virtual onlyOwner {
+        if (newOwner == address(0)) {
+            revert = ZeroAddressSet();
+        }
         if (direct) {
             _transferOwnership(newOwner);
         } else {
@@ -80,8 +85,9 @@ contract SafeOwnable is Context {
      * @dev pending owner call this function to claim ownership
      */
     function claimOwnership() public {
-        require(msg.sender == _pendingOwner, "SafeOwnable: caller != pending");
-
+        if (msg.sender != _pendingOwner) {
+            revert CallerNotPendingOwner();
+        }
         _claimOwnership();
     }
 
