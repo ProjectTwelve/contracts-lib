@@ -9,6 +9,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
+    error CallerNotOwner();
+    error ZeroAddressSet();
+    error CallerNotPendingOwner();
     /**
      * @dev Storage slot with the admin of the contract.
      * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1, and is
@@ -32,10 +35,9 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
         __Ownable_init_unchained(owner_);
     }
 
-    function __Ownable_init_unchained(address owner_)
-        internal
-        onlyInitializing
-    {
+    function __Ownable_init_unchained(
+        address owner_
+    ) internal onlyInitializing {
         _transferOwnership(owner_);
     }
 
@@ -57,7 +59,9 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(owner() == _msgSender(), "SafeOwnable: caller not owner");
+        if (owner() != _msgSender()) {
+            revert CallerNotOwner();
+        }
         _;
     }
 
@@ -77,12 +81,13 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
      * Note If direct is false, it will set an pending owner and the OwnerShipTransferring
      * only happens when the pending owner claim the ownership
      */
-    function transferOwnership(address newOwner, bool direct)
-        public
-        virtual
-        onlyOwner
-    {
-        require(newOwner != address(0), "SafeOwnable: new owner is 0");
+    function transferOwnership(
+        address newOwner,
+        bool direct
+    ) public virtual onlyOwner {
+        if (newOwner == address(0)) {
+            revert = ZeroAddressSet();
+        }
         if (direct) {
             _transferOwnership(newOwner);
         } else {
@@ -94,7 +99,9 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
      * @dev pending owner call this function to claim ownership
      */
     function claimOwnership() public {
-        require(msg.sender == _pendingOwner, "SafeOwnable: caller != pending");
+        if (msg.sender != _pendingOwner) {
+            revert CallerNotPendingOwner();
+        }
 
         _claimOwnership();
     }
