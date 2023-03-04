@@ -10,7 +10,7 @@ import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
     error CallerNotOwner();
-    error ZeroAddressSet();
+    error ZeroAddressOwnerSet();
     error CallerNotPendingOwner();
     /**
      * @dev Storage slot with the admin of the contract.
@@ -86,7 +86,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
         bool direct
     ) public virtual onlyOwner {
         if (newOwner == address(0)) {
-            revert = ZeroAddressSet();
+            revert ZeroAddressOwnerSet();
         }
         if (direct) {
             _transferOwnership(newOwner);
