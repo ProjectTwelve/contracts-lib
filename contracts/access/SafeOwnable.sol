@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 contract SafeOwnable is Context {
     error CallerNotOwner();
-    error ZeroAddressSet();
+    error ZeroAddressOwnerSet();
     error CallerNotPendingOwner();
     address private _owner;
     address private _pendingOwner;
@@ -72,7 +72,7 @@ contract SafeOwnable is Context {
         bool direct
     ) public virtual onlyOwner {
         if (newOwner == address(0)) {
-            revert = ZeroAddressSet();
+            revert ZeroAddressOwnerSet();
         }
         if (direct) {
             _transferOwnership(newOwner);
